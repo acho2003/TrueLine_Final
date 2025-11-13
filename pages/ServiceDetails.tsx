@@ -5,7 +5,7 @@ import Spinner from "../components/Spinner";
 import { createBooking } from "../services/api";
 import { ArrowLeft, Printer } from "lucide-react";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://trueline.onrender.com";
 
 const ADMIN_WHATSAPP_NUMBER = "97517781187";
 

@@ -7,7 +7,7 @@ import Spinner from '../components/Spinner';
 import { FaFacebookF, FaTwitter, FaLinkedinIn } from 'react-icons/fa';
 
 // ✅ Use environment variable or fallback
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://trueline.onrender.com";
 
 
 const BlogDetailPage: React.FC = () => {

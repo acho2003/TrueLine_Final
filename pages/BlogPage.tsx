@@ -5,7 +5,7 @@ import Spinner from "../components/Spinner";
 import { Link } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs"; // A nice arrow for the button
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://trueline.onrender.com";
 
 const BlogPage: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);

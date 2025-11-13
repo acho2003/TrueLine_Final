@@ -4,7 +4,7 @@ import { getBlogPosts, createBlogPost, deleteBlogPost, BlogPost } from '../../se
 import Spinner from '../../components/Spinner';
 import { PlusCircle, Trash2, X, Image as ImageIcon } from 'lucide-react';
 
-const API_BASE_URL = 'http://localhost:5000/api';;
+const API_BASE_URL = 'https://trueline.onrender.com/api';;
 
 const BlogManager: React.FC = () => {
     const [posts, setPosts] = useState<BlogPost[]>([]);

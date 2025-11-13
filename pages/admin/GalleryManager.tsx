@@ -5,7 +5,7 @@ import Spinner from '../../components/Spinner';
 import { PlusCircle, Trash2, UploadCloud, X } from 'lucide-react';
 
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://trueline.onrender.com/api';
 
 const GalleryManager: React.FC = () => {
     const [items, setItems] = useState<GalleryItem[]>([]);

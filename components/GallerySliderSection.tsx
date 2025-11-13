@@ -66,10 +66,8 @@ const GallerySliderSection: React.FC<Props> = ({ works }) => {
       <div className="mt-8">
         <div ref={sliderRef} className="keen-slider">
           {works.map((work) => {
-            // ✅ Fix image path: normalize slashes and prepend API URL
-            const normalizedPath = work.afterPhotos[0]
-              `${API_BASE_URL}/${work.afterPhotos[0].replace(/\\/g, "/")}`
-      
+            // ✅ Fix: normalize path and prepend API URL
+            const normalizedPath = `${API_BASE_URL}/${work.afterPhotos[0].replace(/\\/g, "/")}`;
 
             return (
               <div key={work._id} className="keen-slider__slide">
@@ -77,12 +75,11 @@ const GallerySliderSection: React.FC<Props> = ({ works }) => {
                   to="/gallery"
                   className="block group relative overflow-hidden h-[500px] rounded-none shadow-lg"
                 >
-                  {/* ✅ Use <img> tag for reliability */}
+                  {/* ✅ Image */}
                   <img
                     src={normalizedPath}
                     alt={work.serviceType}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                    
                   />
 
                   {/* Overlay and text */}

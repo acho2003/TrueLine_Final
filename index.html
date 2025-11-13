@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TrueLine Pro Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            extend: {
+        // ... your other extensions (colors, fontFamily) ...
+        // --- ADD THIS ANIMATION CONFIG ---
+        animation: {
+         float: 'float 2s ease-in-out infinite alternate-reverse',
+        },
+        keyframes: {
+          float: {
+            '0%': { transform: 'translateY(-0.25rem)' },
+            '100%': { transform: 'translateY(0.25rem)' },
+          }
+        },
+      
+      },
+      
+            colors: {
+              'primary': '#313647',
+              'primary-dark': '#2a2e3c',
+              'secondary': '#9EB78B',
+              'secondary-dark': '#8aa879',
+              'light-bg': '#FAF8F1',
+              'dark-text': '#313647',
+              'light-text': '#496C7F',
+            },
+            fontFamily: {
+              sans: ['"Inter"', 'sans-serif'],
+                montserrat: ['Montserrat', 'sans-serif'],
+                   'open-sans': ['"Open Sans"', 'sans-serif'],
+              
+            },
+          },
+        },
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="importmap">
+{
+  "imports": {
+    "recharts": "https://aistudiocdn.com/recharts@^3.3.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.5",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.0"
+  }
+}
+</script>
+<style>
+  /* Base fade in for simple elements */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-in-out forwards;
+  }
+  
+  /* Smoother transition for page content */
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-page-enter {
+    animation: page-enter 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+  }
+  
+  /* More cinematic entrance for key elements */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fadeInUp {
+    opacity: 0; /* Prevents flash of unstyled content */
+    animation: fadeInUp 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+  }
+   @keyframes zoomIn {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.1);
+    }
+  }
+  @keyframes float {
+    0% {
+      transform: translateY(-0.25rem);
+    }
+    100% {
+      transform: translateY(0.25rem);
+    }
+  }
+
+   @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(49, 54, 71, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 12px rgba(49, 54, 71, 0);
+    }
+  }
+  .animate-pulse-glow {
+    animation: pulse-glow 2.5s infinite;
+  }
+</style>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+     <div class="animate-float"></div>
+    <div id="root"></div>
+      <div id="modal-root"></div>
+    <script type="module" src="/index.tsx"></script>
+    
+  </body>
+</html>

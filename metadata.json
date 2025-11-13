@@ -1,0 +1,5 @@
+{
+  "name": "Evergreen Outdoor Services",
+  "description": "A booking website for a small business that provides fencing, lawn mowing, landscaping, and general outdoor maintenance services. Customers can browse services and make bookings. An admin panel is included for managing appointments and viewing analytics.",
+  "requestFramePermissions": []
+}

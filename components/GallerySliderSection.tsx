@@ -5,7 +5,7 @@ import "keen-slider/keen-slider.min.css";
 import { Link } from "react-router-dom";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://trueline.onrender.com";
 
 interface GalleryWork {
   _id: string;
@@ -68,8 +68,8 @@ const GallerySliderSection: React.FC<Props> = ({ works }) => {
           {works.map((work) => {
             // ✅ Fix image path: normalize slashes and prepend API URL
             const normalizedPath = work.afterPhotos[0]
-              ? `${API_BASE_URL}/${work.afterPhotos[0].replace(/\\/g, "/")}`
-              : "/placeholder.jpg";
+              `${API_BASE_URL}/${work.afterPhotos[0].replace(/\\/g, "/")}`
+      
 
             return (
               <div key={work._id} className="keen-slider__slide">
@@ -82,9 +82,7 @@ const GallerySliderSection: React.FC<Props> = ({ works }) => {
                     src={normalizedPath}
                     alt={work.serviceType}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                    onError={(e) =>
-                      (e.currentTarget.src = "/fallback.jpg") // optional fallback
-                    }
+                    
                   />
 
                   {/* Overlay and text */}

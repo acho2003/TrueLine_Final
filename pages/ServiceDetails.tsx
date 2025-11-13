@@ -233,7 +233,7 @@ const ServiceDetails: React.FC = () => {
             <div data-aos="fade-right">
               {service.imageUrl ? (
                 <img
-                  src={`backend/${service.imageUrl.replace(/\\/g, "/")}`}
+                  src={`https://trueline.onrender.com/${service.imageUrl.replace(/\\/g, "/")}`}
                   alt={service.name}
                   className="w-full h-auto object-cover rounded-none shadow-lg"
                 />

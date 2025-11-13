@@ -116,7 +116,7 @@ const BlogManager: React.FC = () => {
                 <div className="space-y-4">
                     {posts.map(post => (
                         <div key={post._id} className="bg-white rounded-lg shadow-md flex items-center p-4">
-                            <img src={`backend/${post.imageUrl}`} alt={post.title} className="w-32 h-20 object-cover rounded-md mr-4" />
+                            <img  src={`https://trueline.onrender.com/${post.imageUrl.replace(/\\/g, "/")}`} alt={post.title} className="w-32 h-20 object-cover rounded-md mr-4" />
                             <div className="flex-1">
                                 <h3 className="text-xl font-bold text-gray-800">{post.title}</h3>
                                 <p className="text-sm text-gray-500">Published on: {new Date(post.createdAt).toLocaleDateString()}</p>

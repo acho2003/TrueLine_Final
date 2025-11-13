@@ -137,11 +137,11 @@ const GalleryManager: React.FC = () => {
                         <div key={item._id} className="bg-white rounded-lg shadow-md overflow-hidden">
                             <div className="p-4">
                                 <h3 className="text-xl font-bold text-gray-800">{item.serviceType}</h3>
-                                <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                                <p className="text-sm text-gray-600 mt-1">{item.description}</p> 
                             </div>
                             <div className="grid grid-cols-2 gap-px bg-gray-200">
-                                {item.beforePhotos.map((url, i) => <img key={i} src={`backend/${url}`} alt="Before" className="w-full h-32 object-cover" />)}
-                                {item.afterPhotos.map((url, i) => <img key={i} src={`backend/${url}`} alt="After" className="w-full h-32 object-cover" />)}
+                                {item.beforePhotos.map((url, i) => <img key={i} src={`https://trueline.onrender.com/${url}`} alt="Before" className="w-full h-32 object-cover" />)}
+                                {item.afterPhotos.map((url, i) => <img key={i} src={`https://trueline.onrender.com/${url}`} alt="After" className="w-full h-32 object-cover" />)}
                             </div>
                             <div className="p-2 bg-gray-50 flex justify-end">
                                 <button onClick={() => handleDelete(item._id)} className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100 transition-colors">

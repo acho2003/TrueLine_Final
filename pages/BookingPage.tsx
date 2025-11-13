@@ -158,7 +158,7 @@ Notes: ${submissionData.notes || 'N/A'}
           <div className="text-center mb-10">
             <h1 className="text-4xl font-bold text-black font-montserrat">Get a Quote</h1>
             <p className="text-gray-600 mt-2">
-              Let us know what you're looking for, and we'll provide a free, no-obligation quote.
+              Let us know what you're looking for, and we'll provide no-obligation quote.
             </p>
           </div>
 

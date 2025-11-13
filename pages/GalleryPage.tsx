@@ -73,7 +73,7 @@ interface TimelineEntryProps {
 
 const TimelineEntry: React.FC<TimelineEntryProps> = ({ work, onClick, align }) => {
   const isLeft = align === 'left';
-  const imageUrl = `backend/${work.afterPhotos[0].replace(/\\/g, '/')}`;
+  const imageUrl = `https://trueline.onrender.com/${work.afterPhotos[0].replace(/\\/g, '/')}`;
 
   const content = (
     <div
@@ -201,12 +201,12 @@ const GalleryPage: React.FC = () => {
             <ImageCompareSlider
               beforeImage={
                 selectedWork.beforePhotos.length
-                  ? `backend/${selectedWork.beforePhotos[0].replace(/\\/g, '/')}`
+                  ? `https://trueline.onrender.com/${selectedWork.beforePhotos[0].replace(/\\/g, '/')}`
                   : '/fallback-before.jpg'
               }
               afterImage={
                 selectedWork.afterPhotos.length
-                  ? `backend/${selectedWork.afterPhotos[0].replace(/\\/g, '/')}`
+                  ? `https://trueline.onrender.com/${selectedWork.afterPhotos[0].replace(/\\/g, '/')}`
                   : '/fallback-after.jpg'
               }
             />

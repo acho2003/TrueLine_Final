@@ -76,7 +76,7 @@ const BlogPage: React.FC = () => {
                     <Link to={`/blog/${post._id}`}>
                       <img
                         // ✅ FIX: fetch image from backend correctly
-                        src={`backend/${post.imageUrl.replace(/\\/g, "/")}`}
+                        src={`https://trueline.onrender.com/${post.imageUrl.replace(/\\/g, "/")}`}
                         alt={post.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />

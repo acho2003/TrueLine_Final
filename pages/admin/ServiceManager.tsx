@@ -77,7 +77,7 @@ const ServiceForm = ({ service, onSave, onCancel }: { service: Partial<Service> 
   {!image && service?.imageUrl && (
     <div className="mt-2">
       <img
-        src={`backend/${service.imageUrl}`}
+        src={`https://trueline.onrender.com/${service.imageUrl}`}
         alt={service.name}
         className="w-32 h-32 object-cover rounded border border-gray-200"
       />
@@ -171,7 +171,7 @@ const ServiceManager = () => {
                             <tr key={service._id}>
                               <td className="px-6 py-4">
   <img 
-    src={`backend/${service.imageUrl}`} 
+    src={`https://trueline.onrender.com/${service.imageUrl}`} 
     alt={service.name} 
     className="w-16 h-16 object-cover rounded"
   />

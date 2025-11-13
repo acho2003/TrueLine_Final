@@ -17,7 +17,7 @@ const ServiceHoverCard: React.FC<{ service: Service; index: number }> = ({ servi
     >
       {/* --- UPDATED: use an <img> tag and normalize backslashes in the path --- */}
       <img
-        src={`backend/${service.imageUrl.replace(/\\/g, '/')}`}
+        src={`https://trueline.onrender.com/${service.imageUrl.replace(/\\/g, '/')}`}
         alt={service.name}
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
       />

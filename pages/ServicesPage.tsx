@@ -17,7 +17,7 @@ const ServiceRow: React.FC<{
   index: number;
   imagePosition: "left" | "right";
 }> = ({ service, index, imagePosition }) => {
-  const imageSrc = `backend/${service.imageUrl}`;
+  const imageSrc = `https://trueline.onrender.com/${service.imageUrl}`;
 
   const imageBlock = (
     <div className="relative w-full h-full flex items-center justify-center order-1 md:order-none">

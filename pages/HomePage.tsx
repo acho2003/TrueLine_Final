@@ -10,7 +10,7 @@ import AboutSection from "../components/AboutSection";
 import FeaturedServicesSection from "../components/FeaturedServicesSection";
 import TestimonialsSection from "../components/TestimonialsSection";
 import GallerySliderSection from "../components/GallerySliderSection";
-import banner1 from "../assets/banners.jpeg";
+import banner1 from "../assets/banners.jpg";
 import { Phone, Mail } from "lucide-react";
 import "aos/dist/aos.css";
 import AOS from "aos";

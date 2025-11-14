@@ -64,9 +64,10 @@ const Footer: React.FC = () => {
                 <span className="text-3xl font-bold font-montserrat">
                   TrueLine
                 </span>
-                <span className="text-xl font-normal text-gray-300 tracking-wide mt-1">
+                <span className="text-xl font-normal italic text-gray-300 tracking-wide mt-1">
                Pro Services
                 </span>
+               
               </div>
             </Link>
             <p className="text-gray-400 leading-relaxed">

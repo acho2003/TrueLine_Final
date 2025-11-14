@@ -1,10 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, NavLink } from "react-router-dom";
 import logoSrc from "../assets/logo.png";
 
 // --- ICONS ---
 const MenuIcon: React.FC<{ className?: string }> = ({ className }) => (
-  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <line x1="3" y1="12" x2="21" y2="12"></line>
     <line x1="3" y1="6" x2="21" y2="6"></line>
     <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -12,7 +23,18 @@ const MenuIcon: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 const CloseIcon: React.FC<{ className?: string }> = ({ className }) => (
-  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <line x1="18" y1="6" x2="6" y2="18"></line>
     <line x1="6" y1="6" x2="18" y2="18"></line>
   </svg>
@@ -22,8 +44,8 @@ const useScrollPosition = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   useEffect(() => {
     const handleScroll = () => setScrollPosition(window.pageYOffset);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   return scrollPosition;
 };
@@ -68,7 +90,11 @@ const Header: React.FC = () => {
               src={logoSrc}
               alt="TrueLine Pro Services Logo"
               className={`transition-all duration-300 
-                ${isScrolled ? "h-14 w-14 sm:h-20 sm:w-20 mr-1" : "h-20 w-20 sm:h-32 sm:w-32"}`}
+                ${
+                  isScrolled
+                    ? "h-14 w-14 sm:h-20 sm:w-20 mr-1"
+                    : "h-20 w-20 sm:h-32 sm:w-32"
+                }`}
             />
 
             {/* --- Hide text on mobile --- */}
@@ -76,7 +102,7 @@ const Header: React.FC = () => {
               <span className="text-3xl font-bold text-[#313647] leading-none -ml-12">
                 TrueLine
               </span>
-              <span className="text-md font-normal text-[#4A5C6A] -mt-1 tracking-wide -ml-11">
+              <span className="text-md font-normal italic text-[#4A5C6A] -mt-1 tracking-wide -ml-11">
                 Pro Services
               </span>
             </div>

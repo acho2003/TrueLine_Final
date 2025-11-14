@@ -86,7 +86,7 @@ const FeaturedServicesSection: React.FC<Props> = ({ services }) => {
           </div>
           {services.length > 3 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-              {services.slice(3, 5).map((service, index) => (
+              {services.slice(3, 0).map((service, index) => (
                 <ServiceHoverCard key={service._id} service={service} index={index + 3} />
               ))}
             </div>

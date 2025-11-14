@@ -31,7 +31,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
           state={{ selectedService: service.id }}
           className="inline-block bg-secondary hover:bg-secondary-dark text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
         >
-          Book Now
+         Get A Quote
         </Link>
       </div>
     </div>

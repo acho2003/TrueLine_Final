@@ -45,7 +45,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ serviceName }) => {
     try {
       await createBooking(submissionData);
       setSuccess("Your quote request has been sent! We will contact you shortly.");
-      const message = `\nNew Quote Request!\nService: ${submissionData.serviceType}\nName: ${submissionData.name}\nPhone: ${submissionData.phone}\nSurub: ${submissionData.address}\nNotes: ${submissionData.notes || "N/A"}\n      `;
+      const message = `\nNew Quote Request!\nService: ${submissionData.serviceType}\nName: ${submissionData.name}\nPhone: ${submissionData.phone}\nSubrub: ${submissionData.address}\nNotes: ${submissionData.notes || "N/A"}\n      `;
       window.open(`https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
       setName("");
       setPhone("");
@@ -121,7 +121,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ serviceName }) => {
 
         <div>
           <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-            Surub
+            Subrub
           </label>
           <input
             type="text"

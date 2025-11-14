@@ -216,7 +216,7 @@ Notes: ${submissionData.notes || 'N/A'}
             {/* Address */}
             <div>
               <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                Address (Surub)
+                Address (Subrub)
               </label>
               <input
                 type="text"

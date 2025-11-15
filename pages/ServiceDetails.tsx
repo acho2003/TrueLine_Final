@@ -6,52 +6,136 @@ import { createBooking } from "../services/api";
 import { ArrowLeft, Printer } from "lucide-react";
 
 const API_BASE_URL = "https://trueline.onrender.com";
-
 const ADMIN_WHATSAPP_NUMBER = "97517781187";
+const ADMIN_PHONE_NUMBER = "+97517781187";
 
-// Quote Form Component remains unchanged...
+// ============================================================================
+// Quote Form Component (Updated)
+// ============================================================================
 interface QuoteFormProps {
   serviceName: string;
 }
+
 const QuoteForm: React.FC<QuoteFormProps> = ({ serviceName }) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
+  const [unitHouseNumber, setUnitHouseNumber] = useState("");
+  const [streetName, setStreetName] = useState("");
+  const [state, setState] = useState("");
   const [notes, setNotes] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [validationErrors, setValidationErrors] = useState({ name: false, phone: false, address: false });
+
+  const [validationErrors, setValidationErrors] = useState({
+    name: false,
+    phone: false,
+    unitHouseNumber: false,
+    streetName: false,
+    state: false,
+  });
+
+  // NEW: contact method + mobile detection
+  const [contactMethod, setContactMethod] = useState<"sms" | "whatsapp">("whatsapp");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      if (typeof window !== "undefined") {
+        setIsMobile(window.innerWidth < 768); // Tailwind md breakpoint
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // NEW: phone change handler to keep only digits
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const numeric = e.target.value.replace(/\D/g, ""); // keep only 0–9
+    setPhone(numeric);
+
+    if (validationErrors.phone && numeric.trim()) {
+      setValidationErrors((prev) => ({ ...prev, phone: false }));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-    const newErrors = { name: !name.trim(), phone: !phone.trim(), address: !address.trim() };
+
+    const newErrors = {
+      name: !name.trim(),
+      phone: !phone.trim(),
+      unitHouseNumber: !unitHouseNumber.trim(),
+      streetName: !streetName.trim(),
+      state: !state.trim(),
+    };
     setValidationErrors(newErrors);
-    if (Object.values(newErrors).some(isError => isError)) {
+
+    if (Object.values(newErrors).some((isError) => isError)) {
       setError("Please fill in all required fields highlighted in red.");
       return;
     }
+
     setLoading(true);
+
+    const fullAddress = `${unitHouseNumber} ${streetName}, ${state}`;
     const submissionData = {
       name,
       phone,
-      address,
+      address: fullAddress,
       notes,
       serviceType: serviceName,
       preferredDateTime: new Date().toISOString(),
     };
+
     try {
       await createBooking(submissionData);
       setSuccess("Your quote request has been sent! We will contact you shortly.");
-      const message = `\nNew Quote Request!\nService: ${submissionData.serviceType}\nName: ${submissionData.name}\nPhone: ${submissionData.phone}\nSubrub: ${submissionData.address}\nNotes: ${submissionData.notes || "N/A"}\n      `;
-      window.open(`https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
+
+      const message = `
+New Quote Request!
+Service: ${submissionData.serviceType}
+Name: ${submissionData.name}
+Phone: ${submissionData.phone}
+Address: ${submissionData.address}
+Notes: ${submissionData.notes || "N/A"}
+      `;
+      const encodedMsg = encodeURIComponent(message);
+      const whatsappWebLink = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodedMsg}`;
+      const smsURL = `sms:${ADMIN_PHONE_NUMBER}?body=${encodedMsg}`;
+
+      if (isMobile) {
+        // On mobile: use selected contact method
+        if (contactMethod === "whatsapp") {
+          window.open(whatsappWebLink, "_blank");
+        } else if (contactMethod === "sms") {
+          window.location.href = smsURL;
+        }
+      } else {
+        // On desktop: always use WhatsApp (SMS won't work)
+        window.open(whatsappWebLink, "_blank");
+      }
+
+      // Reset form
       setName("");
       setPhone("");
-      setAddress("");
+      setUnitHouseNumber("");
+      setStreetName("");
+      setState("");
       setNotes("");
-      setValidationErrors({ name: false, phone: false, address: false });
+      setValidationErrors({
+        name: false,
+        phone: false,
+        unitHouseNumber: false,
+        streetName: false,
+        state: false,
+      });
+      setContactMethod("whatsapp");
     } catch (err: any) {
       console.error("Submission failed:", err);
       setError(err.message || "An error occurred. Please try again.");
@@ -59,7 +143,6 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ serviceName }) => {
       setLoading(false);
     }
   };
-
 
   const getInputClasses = (hasError: boolean) => {
     const base =
@@ -77,18 +160,25 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ serviceName }) => {
           Request a Quote for {serviceName}
         </h2>
       </div>
+
       {error && (
-        <div className="bg-red-50 border border-red-300 text-red-800 px-4 py-3 rounded-none mb-6">{error}</div>
+        <div className="bg-red-50 border border-red-300 text-red-800 px-4 py-3 rounded-none mb-6">
+          {error}
+        </div>
       )}
       {success && (
         <div className="bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-none mb-6">
           {success}
         </div>
       )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Full Name
             </label>
             <input
@@ -97,46 +187,101 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ serviceName }) => {
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
-                if (validationErrors.name) setValidationErrors((p) => ({ ...p, name: false }));
+                if (validationErrors.name) {
+                  setValidationErrors((p) => ({ ...p, name: false }));
+                }
               }}
               className={getInputClasses(validationErrors.name)}
             />
           </div>
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Phone Number
             </label>
             <input
               type="tel"
               id="phone"
               value={phone}
-              onChange={(e) => {
-                setPhone(e.target.value);
-                if (validationErrors.phone) setValidationErrors((p) => ({ ...p, phone: false }));
-              }}
+              onChange={handlePhoneChange}
+              inputMode="numeric"
+              pattern="[0-9]*"
               className={getInputClasses(validationErrors.phone)}
             />
           </div>
         </div>
 
-        <div>
-          <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-            Subrub
-          </label>
-          <input
-            type="text"
-            id="address"
-            value={address}
-            onChange={(e) => {
-              setAddress(e.target.value);
-              if (validationErrors.address) setValidationErrors((p) => ({ ...p, address: false }));
-            }}
-            className={getInputClasses(validationErrors.address)}
-          />
+        {/* Detailed Address Fields */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label
+              htmlFor="unitHouseNumber"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Unit/House Number
+            </label>
+            <input
+              type="text"
+              id="unitHouseNumber"
+              value={unitHouseNumber}
+              onChange={(e) => {
+                setUnitHouseNumber(e.target.value);
+                if (validationErrors.unitHouseNumber) {
+                  setValidationErrors((p) => ({ ...p, unitHouseNumber: false }));
+                }
+              }}
+              className={getInputClasses(validationErrors.unitHouseNumber)}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="streetName"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Street Name
+            </label>
+            <input
+              type="text"
+              id="streetName"
+              value={streetName}
+              onChange={(e) => {
+                setStreetName(e.target.value);
+                if (validationErrors.streetName) {
+                  setValidationErrors((p) => ({ ...p, streetName: false }));
+                }
+              }}
+              className={getInputClasses(validationErrors.streetName)}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="state"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              State
+            </label>
+            <input
+              type="text"
+              id="state"
+              value={state}
+              onChange={(e) => {
+                setState(e.target.value);
+                if (validationErrors.state) {
+                  setValidationErrors((p) => ({ ...p, state: false }));
+                }
+              }}
+              className={getInputClasses(validationErrors.state)}
+            />
+          </div>
         </div>
 
         <div>
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="notes"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Additional Notes (optional)
           </label>
           <textarea
@@ -147,6 +292,39 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ serviceName }) => {
             className={getInputClasses(false)}
           ></textarea>
         </div>
+
+        {/* Contact method only visible on mobile */}
+        {isMobile && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Preferred Contact Method
+            </label>
+            <div className="flex gap-6">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="contactMethod"
+                  value="whatsapp"
+                  checked={contactMethod === "whatsapp"}
+                  onChange={() => setContactMethod("whatsapp")}
+                  className="text-green-600 focus:ring-green-500"
+                />
+                <span>WhatsApp</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="contactMethod"
+                  value="sms"
+                  checked={contactMethod === "sms"}
+                  onChange={() => setContactMethod("sms")}
+                  className="text-blue-600 focus:ring-blue-500"
+                />
+                <span>SMS</span>
+              </label>
+            </div>
+          </div>
+        )}
 
         <div className="text-center pt-4">
           <button
@@ -166,7 +344,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ serviceName }) => {
 };
 
 // ============================================================================
-// Main Service Details Page
+// Main Service Details Page (unchanged except it uses updated QuoteForm)
 // ============================================================================
 const ServiceDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -206,7 +384,9 @@ const ServiceDetails: React.FC = () => {
       <section className="bg-blue-50 text-primary py-16 md:py-20 print-hide">
         <div className="container mx-auto px-4 text-center">
           <p className="text-lg font-semibold tracking-widest uppercase">Our Services</p>
-          <h1 className="text-4xl md:text-5xl font-bold font-montserrat mt-2">{service.name}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold font-montserrat mt-2">
+            {service.name}
+          </h1>
         </div>
       </section>
 
@@ -244,15 +424,16 @@ const ServiceDetails: React.FC = () => {
               )}
             </div>
             <div data-aos="fade-left">
-              <h2 className="text-3xl lg:text-4xl font-bold text-primary font-montserrat mb-4">{service.name}</h2>
+              <h2 className="text-3xl lg:text-4xl font-bold text-primary font-montserrat mb-4">
+                {service.name}
+              </h2>
 
-              {/* ✅ Added service description */}
               {service.description && (
                 <p className="text-gray-500 text-lg mb-6 leading-relaxed">
                   {service.description}
                 </p>
-              )}  
-            
+              )}
+
               <div
                 className="prose max-w-none text-gray-600 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: service.details }}
@@ -261,7 +442,7 @@ const ServiceDetails: React.FC = () => {
           </div>
         </div>
       </section>
-              
+
       <section id="quote-form-section" className="bg-gray-50 py-20 lg:py-28 print-hide">
         <div className="container mx-auto px-4 max-w-4xl">
           <QuoteForm serviceName={service.name} />

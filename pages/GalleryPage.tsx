@@ -1,7 +1,7 @@
 // src/pages/GalleryPage.tsx
 
 import React, { useState, useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom'; // 1. IMPORT ReactDOM - THIS IS CRITICAL TO PREVENT CRASHES
+import ReactDOM from 'react-dom';
 import { getManagedGalleryItems } from '../services/api';
 import Spinner from '../components/Spinner';
 import { X, ChevronsLeftRight } from 'lucide-react';
@@ -15,7 +15,7 @@ interface GalleryWork {
 }
 
 // ============================================================================
-// Image Comparison Slider Component (Unchanged)
+// Image Comparison Slider Component
 // ============================================================================
 interface ImageSliderProps {
   beforeImage: string;
@@ -53,17 +53,35 @@ const ImageCompareSlider: React.FC<ImageSliderProps> = ({ beforeImage, afterImag
       onMouseDown={handleMouseDown}
       onTouchMove={handleTouchMove}
     >
-      <img src={afterImage} alt="After" className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none" style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }} draggable={false} />
-      <img src={beforeImage} alt="Before" className="block w-full h-full object-cover pointer-events-none" draggable={false} />
-      <div className="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize" style={{ left: `calc(${sliderPos}% - 1px)` }}>
-        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white text-primary rounded-full p-2 shadow-lg"><ChevronsLeftRight size={24} /></div>
+      <img
+        src={afterImage}
+        alt="After"
+        className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
+        style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
+        draggable={false}
+      />
+
+      <img
+        src={beforeImage}
+        alt="Before"
+        className="block w-full h-full object-cover pointer-events-none"
+        draggable={false}
+      />
+
+      <div
+        className="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize"
+        style={{ left: `calc(${sliderPos}% - 1px)` }}
+      >
+        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white text-primary rounded-full p-2 shadow-lg">
+          <ChevronsLeftRight size={24} />
+        </div>
       </div>
     </div>
   );
 };
 
 // ============================================================================
-// Timeline Entry Component (Unchanged)
+// Timeline Entry Component
 // ============================================================================
 interface TimelineEntryProps {
   work: GalleryWork;
@@ -87,12 +105,13 @@ const TimelineEntry: React.FC<TimelineEntryProps> = ({ work, onClick, align }) =
         alt={work.serviceType}
         className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
       />
+
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-6 flex flex-col justify-end">
-        <div>
-          <h3 className="text-xl font-bold text-white font-montserrat">{work.serviceType}</h3>
-          <p className="mt-2 text-gray-200 font-open-sans line-clamp-2">{work.description}</p>
-          <p className="mt-3 font-semibold text-[#6FAF4B] group-hover:underline">Click to Compare Before & After</p>
-        </div>
+        <h3 className="text-xl font-bold text-white font-montserrat">{work.serviceType}</h3>
+        <p className="mt-2 text-gray-200 font-open-sans line-clamp-2">{work.description}</p>
+        <p className="mt-3 font-semibold text-[#6FAF4B] group-hover:underline">
+          Click to Compare Before & After
+        </p>
       </div>
     </div>
   );
@@ -106,9 +125,8 @@ const TimelineEntry: React.FC<TimelineEntryProps> = ({ work, onClick, align }) =
   );
 };
 
-
 // ============================================================================
-// Main Gallery Page Component
+// Main Gallery Page
 // ============================================================================
 const GalleryPage: React.FC = () => {
   const [works, setWorks] = useState<GalleryWork[]>([]);
@@ -116,14 +134,12 @@ const GalleryPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedWork, setSelectedWork] = useState<GalleryWork | null>(null);
 
-  // 2. USE A MORE ROBUST BODY SCROLL LOCK EFFECT
   useEffect(() => {
     if (selectedWork) {
-      document.body.style.overflow = 'hidden'; // Prevent background scroll
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'auto'; // Restore background scroll
+      document.body.style.overflow = 'auto';
     }
-    // Cleanup function
     return () => {
       document.body.style.overflow = 'auto';
     };
@@ -136,15 +152,25 @@ const GalleryPage: React.FC = () => {
         const galleryData = await getManagedGalleryItems();
         setWorks(galleryData);
       } catch (err: any) {
-        setError(err.message || 'Failed to load our work.');
+        setError(err.message || 'Failed to load gallery.');
       } finally {
         setLoading(false);
       }
     };
     fetchWorks();
   }, []);
-  
-  // No changes to loading/error states...
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-center py-20 text-red-500">{error}</div>;
+  }
 
   return (
     <div className="bg-white font-open-sans text-gray-800 overflow-x-hidden -mt-10">
@@ -153,14 +179,14 @@ const GalleryPage: React.FC = () => {
           <h1 className="text-4xl md:text-5xl font-bold text-black tracking-tight font-montserrat">
             Gallery
           </h1>
-         <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
             We showcase stunning before-and-after transformations that highlight our dedication to quality outdoor craftsmanship.
           </p>
         </div>
 
         {works.length === 0 ? (
           <p className="text-center text-gray-500 text-xl py-10">
-            Our gallery is currently empty. Please check back soon for updates!
+            Our gallery is currently empty. Please check back soon.
           </p>
         ) : (
           <div className="relative max-w-4xl mx-auto">
@@ -177,43 +203,53 @@ const GalleryPage: React.FC = () => {
         )}
       </div>
 
-      {/* 3. USE A PORTAL TO RENDER THE MODAL OUTSIDE THE STACKING CONTEXT */}
-      {selectedWork && ReactDOM.createPortal(
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 animate-fadeIn p-4"
-          onClick={() => setSelectedWork(null)}
-        >
+      {/* =======================================================================
+          MODAL (Updated - Smaller on Desktop)
+      ======================================================================= */}
+      {selectedWork &&
+        ReactDOM.createPortal(
           <div
-            className="relative w-full max-w-5xl"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-50 flex items-start justify-center 
+                       overflow-y-auto bg-black/80 animate-fadeIn 
+                       p-4 pt-16 sm:p-8 lg:pt-24"
+            onClick={() => setSelectedWork(null)}
           >
-            <button
-              onClick={() => setSelectedWork(null)}
-              className="absolute -top-2 -right-2 z-10 bg-white text-gray-700 rounded-full p-2 shadow-lg hover:bg-gray-200"
-              aria-label="Close"
+            <div
+              className="relative w-full max-w-3xl max-h-screen overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
             >
-              <X size={24} />
-            </button>
-            <div className="text-center mb-4">
-              <h2 className="text-3xl font-bold text-white font-montserrat">{selectedWork.serviceType}</h2>
-              <p className="text-gray-300 font-open-sans">{selectedWork.description}</p>
+              <button
+                onClick={() => setSelectedWork(null)}
+                className="absolute top-2 right-2 z-20 bg-white text-gray-700 
+                           rounded-full p-2 shadow-lg hover:bg-gray-200"
+                aria-label="Close"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="text-center mb-4 mt-10">
+                <h2 className="text-3xl font-bold text-white font-montserrat">
+                  {selectedWork.serviceType}
+                </h2>
+                <p className="text-gray-300 font-open-sans">{selectedWork.description}</p>
+              </div>
+
+              <ImageCompareSlider
+                beforeImage={
+                  selectedWork.beforePhotos.length
+                    ? `https://trueline.onrender.com/${selectedWork.beforePhotos[0].replace(/\\/g, '/')}`
+                    : '/fallback-before.jpg'
+                }
+                afterImage={
+                  selectedWork.afterPhotos.length
+                    ? `https://trueline.onrender.com/${selectedWork.afterPhotos[0].replace(/\\/g, '/')}`
+                    : '/fallback-after.jpg'
+                }
+              />
             </div>
-            <ImageCompareSlider
-              beforeImage={
-                selectedWork.beforePhotos.length
-                  ? `https://trueline.onrender.com/${selectedWork.beforePhotos[0].replace(/\\/g, '/')}`
-                  : '/fallback-before.jpg'
-              }
-              afterImage={
-                selectedWork.afterPhotos.length
-                  ? `https://trueline.onrender.com/${selectedWork.afterPhotos[0].replace(/\\/g, '/')}`
-                  : '/fallback-after.jpg'
-              }
-            />
-          </div>
-        </div>,
-        document.getElementById('modal-root')! // The '!' tells TypeScript we are sure this element exists
-      )}
+          </div>,
+          document.getElementById('modal-root')!
+        )}
     </div>
   );
 };

@@ -1,16 +1,18 @@
+// src/pages/ServiceDetails.tsx
+
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Service } from "../types";
 import Spinner from "../components/Spinner";
 import { createBooking } from "../services/api";
-import { ArrowLeft, Printer } from "lucide-react";
+import { ArrowLeft, Printer, CheckCircle } from "lucide-react"; // Changed to CheckCircle (Safer for older Lucide versions)
 
 const API_BASE_URL = "https://trueline.onrender.com";
 const ADMIN_WHATSAPP_NUMBER = "97517781187";
 const ADMIN_PHONE_NUMBER = "+97517781187";
 
 // ============================================================================
-// Quote Form Component (Updated)
+// Quote Form Component
 // ============================================================================
 interface QuoteFormProps {
   serviceName: string;
@@ -36,27 +38,23 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ serviceName }) => {
     state: false,
   });
 
-  // NEW: contact method + mobile detection
   const [contactMethod, setContactMethod] = useState<"sms" | "whatsapp">("whatsapp");
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
       if (typeof window !== "undefined") {
-        setIsMobile(window.innerWidth < 768); // Tailwind md breakpoint
+        setIsMobile(window.innerWidth < 768);
       }
     };
-
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // NEW: phone change handler to keep only digits
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const numeric = e.target.value.replace(/\D/g, ""); // keep only 0–9
+    const numeric = e.target.value.replace(/\D/g, "");
     setPhone(numeric);
-
     if (validationErrors.phone && numeric.trim()) {
       setValidationErrors((prev) => ({ ...prev, phone: false }));
     }
@@ -110,18 +108,15 @@ Notes: ${submissionData.notes || "N/A"}
       const smsURL = `sms:${ADMIN_PHONE_NUMBER}?body=${encodedMsg}`;
 
       if (isMobile) {
-        // On mobile: use selected contact method
         if (contactMethod === "whatsapp") {
           window.open(whatsappWebLink, "_blank");
         } else if (contactMethod === "sms") {
           window.location.href = smsURL;
         }
       } else {
-        // On desktop: always use WhatsApp (SMS won't work)
         window.open(whatsappWebLink, "_blank");
       }
 
-      // Reset form
       setName("");
       setPhone("");
       setUnitHouseNumber("");
@@ -175,10 +170,7 @@ Notes: ${submissionData.notes || "N/A"}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
               Full Name
             </label>
             <input
@@ -187,18 +179,13 @@ Notes: ${submissionData.notes || "N/A"}
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
-                if (validationErrors.name) {
-                  setValidationErrors((p) => ({ ...p, name: false }));
-                }
+                if (validationErrors.name) setValidationErrors((p) => ({ ...p, name: false }));
               }}
               className={getInputClasses(validationErrors.name)}
             />
           </div>
           <div>
-            <label
-              htmlFor="phone"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
               Phone Number
             </label>
             <input
@@ -213,13 +200,9 @@ Notes: ${submissionData.notes || "N/A"}
           </div>
         </div>
 
-        {/* Detailed Address Fields */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label
-              htmlFor="unitHouseNumber"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="unitHouseNumber" className="block text-sm font-medium text-gray-700 mb-1">
               Unit/House Number
             </label>
             <input
@@ -228,18 +211,14 @@ Notes: ${submissionData.notes || "N/A"}
               value={unitHouseNumber}
               onChange={(e) => {
                 setUnitHouseNumber(e.target.value);
-                if (validationErrors.unitHouseNumber) {
+                if (validationErrors.unitHouseNumber)
                   setValidationErrors((p) => ({ ...p, unitHouseNumber: false }));
-                }
               }}
               className={getInputClasses(validationErrors.unitHouseNumber)}
             />
           </div>
           <div>
-            <label
-              htmlFor="streetName"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="streetName" className="block text-sm font-medium text-gray-700 mb-1">
               Street Name
             </label>
             <input
@@ -248,18 +227,14 @@ Notes: ${submissionData.notes || "N/A"}
               value={streetName}
               onChange={(e) => {
                 setStreetName(e.target.value);
-                if (validationErrors.streetName) {
+                if (validationErrors.streetName)
                   setValidationErrors((p) => ({ ...p, streetName: false }));
-                }
               }}
               className={getInputClasses(validationErrors.streetName)}
             />
           </div>
           <div>
-            <label
-              htmlFor="state"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
               State
             </label>
             <input
@@ -268,9 +243,7 @@ Notes: ${submissionData.notes || "N/A"}
               value={state}
               onChange={(e) => {
                 setState(e.target.value);
-                if (validationErrors.state) {
-                  setValidationErrors((p) => ({ ...p, state: false }));
-                }
+                if (validationErrors.state) setValidationErrors((p) => ({ ...p, state: false }));
               }}
               className={getInputClasses(validationErrors.state)}
             />
@@ -278,10 +251,7 @@ Notes: ${submissionData.notes || "N/A"}
         </div>
 
         <div>
-          <label
-            htmlFor="notes"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
+          <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
             Additional Notes (optional)
           </label>
           <textarea
@@ -293,7 +263,6 @@ Notes: ${submissionData.notes || "N/A"}
           ></textarea>
         </div>
 
-        {/* Contact method only visible on mobile */}
         {isMobile && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -344,13 +313,15 @@ Notes: ${submissionData.notes || "N/A"}
 };
 
 // ============================================================================
-// Main Service Details Page (unchanged except it uses updated QuoteForm)
+// Main Service Details Page
 // ============================================================================
 const ServiceDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [service, setService] = useState<Service | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // ✅ Prevent crash: Initialize as empty array
+  const [detailsList, setDetailsList] = useState<string[]>([]); 
 
   useEffect(() => {
     const fetchService = async () => {
@@ -361,6 +332,21 @@ const ServiceDetails: React.FC = () => {
         if (!res.ok) throw new Error("Service could not be found.");
         const data = await res.json();
         setService(data);
+
+        // ✅ SAFE PARSING LOGIC:
+        // 1. If 'details' exists and is a String, split it.
+        // 2. If 'details' is already an Array (from DB), use it directly.
+        // 3. Otherwise, use an empty array.
+        let parsedDetails: string[] = [];
+        if (data.details) {
+            if (typeof data.details === "string") {
+                parsedDetails = data.details.split(",").map((s: string) => s.trim()).filter((s: string) => s.length > 0);
+            } else if (Array.isArray(data.details)) {
+                parsedDetails = data.details;
+            }
+        }
+        setDetailsList(parsedDetails);
+
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -410,10 +396,11 @@ const ServiceDetails: React.FC = () => {
           </div>
 
           <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-start pt-0 md:pt-0 print-stack">
+            {/* Left Column: Image (Safe Check Added) */}
             <div data-aos="fade-right">
-              {service.imageUrl ? (
+              {service.imageUrl && typeof service.imageUrl === 'string' ? (
                 <img
-                  src={`https://trueline.onrender.com/${service.imageUrl.replace(/\\/g, "/")}`}
+                  src={`${service.imageUrl.replace(/\\/g, "/")}`}
                   alt={service.name}
                   className="w-full h-auto object-cover rounded-none shadow-lg"
                 />
@@ -423,21 +410,44 @@ const ServiceDetails: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {/* Right Column: Title and The Key Points List */}
             <div data-aos="fade-left">
               <h2 className="text-3xl lg:text-4xl font-bold text-primary font-montserrat mb-4">
                 {service.name}
               </h2>
 
+              {/* Display Main Description if available */}
               {service.description && (
-                <p className="text-gray-500 text-lg mb-6 leading-relaxed">
+                <p className="text-gray-500 text-lg mb-8 leading-relaxed">
                   {service.description}
                 </p>
               )}
 
-              <div
-                className="prose max-w-none text-gray-600 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: service.details }}
-              />
+              {/* ✅ MODIFIED: DISPLAY LIST SAFELY */}
+              {detailsList.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="text-xl font-bold text-primary font-montserrat mb-4">
+                    Key Features & Details
+                  </h3>
+                  <ul className="space-y-4">
+                    {detailsList.map((item, index) => (
+                      <li key={index} className="flex items-start">
+                        {/* Green Check Icon */}
+                        <CheckCircle
+                          className="w-6 h-6 text-secondary mt-1 mr-3 flex-shrink-0"
+                        />
+                        {/* The Text Item */}
+                        <span className="text-gray-700 text-lg leading-relaxed">
+                          {item}
+                          {/* Add a period at the end for neatness if missing */}
+                          {item.endsWith(".") ? "" : "."}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -1,26 +1,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Service } from '../../types'; // Ensure this import is correct
+import { Service } from '../../types'; 
 import { getServices, createService, updateService, deleteService } from '../../services/api';
 import Spinner from '../../components/Spinner';
 
 const ServiceForm = ({ service, onSave, onCancel }: { service: Partial<Service> | null, onSave: (data: FormData) => void, onCancel: () => void }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [details, setDetails] = useState(''); // --- NEW STATE ---
+    const [details, setDetails] = useState(''); 
     const [image, setImage] = useState<File | null>(null);
 
     useEffect(() => {
         if (service) {
             setName(service.name || '');
             setDescription(service.description || '');
-            // Convert array of details to a comma-separated string for the textarea
-            setDetails(service.details ? service.details.join(', ') : ''); // --- UPDATED EFFECT ---
+            setDetails(service.details ? service.details.join(', ') : '');
             setImage(null);
         } else {
-             // Reset form for new service
              setName('');
              setDescription('');
-             setDetails(''); // Reset new field
+             setDetails('');
              setImage(null);
         }
     }, [service]);
@@ -30,7 +28,7 @@ const ServiceForm = ({ service, onSave, onCancel }: { service: Partial<Service> 
         const formData = new FormData();
         formData.append('name', name);
         formData.append('description', description);
-        formData.append('details', details); // --- APPEND NEW FIELD ---
+        formData.append('details', details);
         if (image) {
             formData.append('image', image);
         }
@@ -39,12 +37,10 @@ const ServiceForm = ({ service, onSave, onCancel }: { service: Partial<Service> 
 
     return (
         <div className="p-6 mb-6 bg-gray-50 border border-gray-200 rounded-lg shadow-sm animate-fadeInUp">
-            {/* ... (omitted) */}
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} required className="w-full p-2 border rounded" />
                 <textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} required className="w-full p-2 border rounded" rows={3} />
-                {/* <input type="text" placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} required className="w-full p-2 border rounded" /> */}
-                {/* --- NEW FIELD FOR DETAILS LIST --- */}
+                
                 <textarea 
                     placeholder="Details (comma-separated list, e.g., Mowing, Edging, Blowing)" 
                     value={details} 
@@ -52,38 +48,38 @@ const ServiceForm = ({ service, onSave, onCancel }: { service: Partial<Service> 
                     className="w-full p-2 border rounded" 
                     rows={2} 
                 />
-                {/* --------------------------------- */}
-               <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Service Image</label>
-  <input
-    type="file"
-    accept="image/*"
-    onChange={e => setImage(e.target.files ? e.target.files[0] : null)}
-    className="block w-full text-sm text-gray-700 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
-  />
+                
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Service Image</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={e => setImage(e.target.files ? e.target.files[0] : null)}
+                        className="block w-full text-sm text-gray-700 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
 
-  {/* ✅ Preview selected image before upload */}
-  {image && (
-    <div className="mt-2">
-      <img
-        src={URL.createObjectURL(image)}
-        alt="Preview"
-        className="w-32 h-32 object-cover rounded border border-gray-200"
-      />
-    </div>
-  )}
+                    {/* Preview selected image before upload */}
+                    {image && (
+                        <div className="mt-2">
+                            <img
+                                src={URL.createObjectURL(image)}
+                                alt="Preview"
+                                className="w-32 h-32 object-cover rounded border border-gray-200"
+                            />
+                        </div>
+                    )}
 
-  {/* ✅ Show existing image if editing and no new one selected */}
-  {!image && service?.imageUrl && (
-    <div className="mt-2">
-      <img
-        src={`https://trueline.onrender.com/${service.imageUrl}`}
-        alt={service.name}
-        className="w-32 h-32 object-cover rounded border border-gray-200"
-      />
-    </div>
-  )}
-</div>
+                    {/* UPDATED: Show existing Cloudinary image */}
+                    {!image && service?.imageUrl && (
+                        <div className="mt-2">
+                            <img
+                                src={service.imageUrl}
+                                alt={service.name}
+                                className="w-32 h-32 object-cover rounded border border-gray-200"
+                            />
+                        </div>
+                    )}
+                </div>
 
                 <div className="flex gap-2">
                     <button type="submit" className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark">Save</button>
@@ -94,7 +90,6 @@ const ServiceForm = ({ service, onSave, onCancel }: { service: Partial<Service> 
     );
 };
 
-// --- ServiceManager Component ---
 const ServiceManager = () => {
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
@@ -119,7 +114,6 @@ const ServiceManager = () => {
 
     const handleSave = async (data: FormData) => {
         try {
-            // This type guard remains correct for the if statement.
             if (editingService && editingService._id) {
                 await updateService(editingService._id, data);
             } else {
@@ -169,13 +163,14 @@ const ServiceManager = () => {
                     <tbody className="divide-y divide-gray-200">
                         {services.map(service => (
                             <tr key={service._id}>
-                              <td className="px-6 py-4">
-  <img 
-    src={`https://trueline.onrender.com/${service.imageUrl}`} 
-    alt={service.name} 
-    className="w-16 h-16 object-cover rounded"
-  />
-</td>
+                                <td className="px-6 py-4">
+                                    {/* UPDATED: Use Cloudinary URL directly */}
+                                    <img 
+                                        src={service.imageUrl} 
+                                        alt={service.name} 
+                                        className="w-16 h-16 object-cover rounded"
+                                    />
+                                </td>
                                 <td className="px-6 py-4 font-medium">{service.name}</td>
                                 <td className="px-6 py-4 space-x-2 whitespace-nowrap">
                                     <button onClick={() => setEditingService(service)} className="text-indigo-600 hover:text-indigo-900">Edit</button>

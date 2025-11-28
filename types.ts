@@ -9,7 +9,14 @@ export enum BookingStatus {
   Completed = 'Completed',
   Canceled = 'Canceled',
 }
-
+export interface Testimonial {
+  _id: string;
+  name: string;
+  location: string;
+  rating: number;
+  reviewText: string;
+  createdAt: string;
+}
 // --- Main Data Interfaces ---
 
 // Service: Represents a service offered.

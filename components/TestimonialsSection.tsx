@@ -1,40 +1,9 @@
 // src/components/TestimonialsSection.tsx
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaStar, FaArrowLeft, FaArrowRight, FaUser } from "react-icons/fa";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-
-const testimonials = [
-  {
-    _id: "1",
-    name: "Sarah J.",
-    location: "Joondalup, WA",
-    rating: 4,
-    reviewText: "TrueLine transformed our backyard! The team was professional, efficient, and the quality of their work on our new fence is outstanding. Highly recommended!",
-  },
-  {
-    _id: "2",
-    name: "Michael B.",
-    location: "Carine",
-    rating: 5,
-    reviewText: "From the initial quote to the final cleanup, the entire process was seamless. Our lawn has never looked better. A truly professional service.",
-  },
-  {
-    _id: "3",
-    name: "Emily R.",
-    location: "Joondalup, WA",
-    rating: 5,
-    reviewText: "They listened to our vision and executed it perfectly. The attention to detail is what sets them apart. We are so happy with the results!",
-  },
-  {
-    _id: "4",
-    name: "David L.",
-    location: "Two Rocks, WA",
-    rating: 4,
-    reviewText: "A fantastic job on our garden maintenance. The team is always on time and does great work. Our yard looks neat and tidy all year round.",
-  },
-];
+import { getTestimonials, Testimonial } from "../services/api"; // Ensure these imports match your api.ts
 
 const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
   return (
@@ -51,8 +20,10 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
   );
 };
 
-
 const TestimonialsSection: React.FC = () => {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     breakpoints: {
       "(min-width: 768px)": { slides: { perView: 2, spacing: 30 } },
@@ -62,8 +33,34 @@ const TestimonialsSection: React.FC = () => {
     initial: 0,
   });
 
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const data = await getTestimonials();
+        setTestimonials(data);
+      } catch (error) {
+        console.error("Failed to fetch testimonials:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
+
+  // Force slider update when testimonials data arrives
+  useEffect(() => {
+    if (instanceRef.current) {
+      instanceRef.current.update();
+    }
+  }, [testimonials, instanceRef]);
+
+  if (loading) return <div className="py-20 text-center text-gray-500">Loading Reviews...</div>;
+  
+  // Don't hide the section if empty, maybe show a placeholder or return null
+  if (testimonials.length === 0) return null; 
+
   return (
-    // --- MODIFIED: Changed bg-white to bg-gray-50 ---
     <section className="bg-gray-50 py-20 lg:py-28">
       <div className="container mx-auto px-4">
         {/* Section Header */}
@@ -82,7 +79,7 @@ const TestimonialsSection: React.FC = () => {
                                 before:absolute before:w-6 before:h-6 before:bg-primary 
                                 before:rotate-45 before:left-12 before:-bottom-3">
                     <StarRating rating={testimonial.rating} />
-                    <p className="font-open-sans text-base text-gray-300 leading-relaxed mt-6">
+                    <p className="font-open-sans text-base text-gray-300 leading-relaxed mt-6 italic">
                       "{testimonial.reviewText}"
                     </p>
                   </div>
@@ -129,4 +126,5 @@ const TestimonialsSection: React.FC = () => {
   );
 };
 
+// 👇 THIS EXPORT WAS LIKELY MISSING
 export default TestimonialsSection;

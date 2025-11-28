@@ -6,7 +6,7 @@ import { getManagedGalleryItems } from '../services/api';
 import Spinner from '../components/Spinner';
 import { X, ChevronsLeftRight } from 'lucide-react';
 
-interface GalleryWork {
+interface GalleryWork { 
   _id: string;
   serviceType: string;
   description: string;
@@ -81,7 +81,7 @@ const ImageCompareSlider: React.FC<ImageSliderProps> = ({ beforeImage, afterImag
 };
 
 // ============================================================================
-// Timeline Entry Component
+// Timeline Entry Component (Updated Image Size)
 // ============================================================================
 interface TimelineEntryProps {
   work: GalleryWork;
@@ -91,22 +91,34 @@ interface TimelineEntryProps {
 
 const TimelineEntry: React.FC<TimelineEntryProps> = ({ work, onClick, align }) => {
   const isLeft = align === 'left';
-  const imageUrl = `https://trueline.onrender.com/${work.afterPhotos[0].replace(/\\/g, '/')}`;
+  
+  let imageUrl = work.afterPhotos[0];
+  if (imageUrl) {
+      imageUrl = imageUrl.replace(/['"]+/g, '');
+  }
 
   const content = (
     <div
-      className="cursor-pointer group relative overflow-hidden rounded-none shadow-lg"
+      className="cursor-pointer group relative overflow-hidden rounded-none shadow-lg bg-gray-100"
       onClick={onClick}
       data-aos={isLeft ? 'fade-right' : 'fade-left'}
       data-aos-duration="1000"
     >
+      {/* 
+         ✅ FIXED IMAGE SIZE: 
+         Changed 'h-auto' to 'h-64 md:h-80'.
+         - w-full: Width fills the card
+         - h-64: Fixed height on mobile
+         - md:h-80: Fixed height on desktop
+         - object-cover: Ensures image fills the box without stretching/distortion
+      */}
       <img
         src={imageUrl}
         alt={work.serviceType}
-        className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+        className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
       />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-6 flex flex-col justify-end">
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 flex flex-col justify-end">
         <h3 className="text-xl font-bold text-white font-montserrat">{work.serviceType}</h3>
         <p className="mt-2 text-gray-200 font-open-sans line-clamp-2">{work.description}</p>
         <p className="mt-3 font-semibold text-[#6FAF4B] group-hover:underline">
@@ -117,10 +129,13 @@ const TimelineEntry: React.FC<TimelineEntryProps> = ({ work, onClick, align }) =
   );
 
   return (
-    <div className="relative grid grid-cols-2 gap-12 items-start my-8">
-      {isLeft ? content : <div />}
-      {isLeft ? <div /> : content}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#6FAF4B] border-4 border-white z-10" />
+    <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center my-8 md:my-12">
+      {/* Used hidden md:block to handle timeline structure on mobile vs desktop */}
+      {isLeft ? content : <div className="hidden md:block" />}
+      {isLeft ? <div className="hidden md:block" /> : content}
+      
+      {/* Timeline Dot (Only visible on desktop usually, but kept here for your structure) */}
+      <div className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#6FAF4B] border-4 border-white z-10 shadow-sm" />
     </div>
   );
 };
@@ -190,7 +205,9 @@ const GalleryPage: React.FC = () => {
           </p>
         ) : (
           <div className="relative max-w-4xl mx-auto">
-            <div className="absolute left-1/2 -translate-x-1/2 h-full w-0.5 bg-gray-300" />
+            {/* Center Line (Hidden on mobile) */}
+            <div className="hidden md:block absolute left-1/2 -translate-x-1/2 h-full w-0.5 bg-gray-300" />
+            
             {works.map((work, index) => (
               <TimelineEntry
                 key={work._id}
@@ -204,7 +221,7 @@ const GalleryPage: React.FC = () => {
       </div>
 
       {/* =======================================================================
-          MODAL (Updated - Smaller on Desktop)
+          MODAL
       ======================================================================= */}
       {selectedWork &&
         ReactDOM.createPortal(
@@ -237,12 +254,12 @@ const GalleryPage: React.FC = () => {
               <ImageCompareSlider
                 beforeImage={
                   selectedWork.beforePhotos.length
-                    ? `https://trueline.onrender.com/${selectedWork.beforePhotos[0].replace(/\\/g, '/')}`
+                    ? `${selectedWork.beforePhotos[0].replace(/\\/g, '/')}`
                     : '/fallback-before.jpg'
                 }
                 afterImage={
                   selectedWork.afterPhotos.length
-                    ? `https://trueline.onrender.com/${selectedWork.afterPhotos[0].replace(/\\/g, '/')}`
+                    ? `${selectedWork.afterPhotos[0].replace(/\\/g, '/')}`
                     : '/fallback-after.jpg'
                 }
               />

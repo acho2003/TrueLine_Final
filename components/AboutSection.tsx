@@ -3,17 +3,15 @@
 import { Link } from "react-router-dom";
 
 // --- Import the images for this section ---
-import aboutImage1 from "../assets/banner2.jpg";
-import aboutImage2 from "../assets/banner.jpg";
+import aboutImage1 from "../assets/about2.jpg";
+import aboutImage2 from "../assets/banners.jpg";
 
 const AboutSection = () => {
   return (
     <section className="py-20 lg:py-28 bg-white overflow-x-hidden">
-      {" "}
-      {/* Added overflow-x-hidden to prevent horizontal scrollbars during animation */}
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center">
-        {/* 1st Column (Text then Image) */}
-        {/* MODIFIED: Animation now applies to the whole column from the right */}
+        
+        {/* 1st Column (Text then Image) - FOCUSED ON FENCING & SAFETY */}
         <div data-aos="fade-right" data-aos-duration="1200">
           <div>
             <p className="text-lg leading-7 text-secondary flex items-center font-semibold font-montserrat">
@@ -24,53 +22,50 @@ const AboutSection = () => {
               Your Vision, Executed with Unmatched Quality
             </h2>
             <p className="text-base text-gray-600 font-open-sans leading-relaxed">
-              At TrueLine, we believe an outdoor space is more than just
-              land it's an extension of your home. It's where memories are made.
-              Our team is dedicated to transforming your vision into a reality
-              with precision, professionalism, and a deep respect for your
-              property.
+              TrueLine is your go-to expert for durable, high-quality boundaries. 
+              We specialize in the <strong>installation of new Colorbond fences and gates</strong>, 
+              as well as extensions to increase height and privacy. 
+              <br /><br />
+              We don't just build; we clear the way safely. Our team is trained and licensed 
+              to handle the removal of old gates and strictly adheres to safety regulations 
+              for the <strong>removal of non-friable asbestos fencing</strong>, keeping your property safe.
             </p>
           </div>
           <div className="mt-8 lg:mt-12">
-            {/* MODIFIED: Changed rounded-lg to rounded-none for sharp corners */}
             <img
               src={aboutImage1}
-              alt="A beautifully manicured lawn and garden bed"
-              className="rounded-none shadow-md"
+              alt="Colorbond fence installation and removal works"
+              className="rounded-none shadow-md w-full object-cover"
             />
           </div>
         </div>
 
-        {/* 2nd Column (Image then Text) */}
-        {/* MODIFIED: Animation now applies to the whole column from the left */}
+        {/* 2nd Column (Image then Text) - FOCUSED ON MAINTENANCE & GARDENING */}
         <div data-aos="fade-left" data-aos-duration="1200">
           <div>
-            {/* MODIFIED: Changed rounded-lg to rounded-none for sharp corners */}
             <img
               src={aboutImage2}
-              alt="A newly installed custom fence"
-              className="rounded-none shadow-md"
+              alt="Garden maintenance and lawn mowing"
+              className="rounded-none shadow-md w-full object-cover"
             />
           </div>
           <div className="mt-8 lg:mt-12">
             <p className="text-base text-gray-600 font-open-sans leading-relaxed mb-6">
-              From the initial consultation to the final walkthrough, we
-              prioritize clear communication and meticulous craftsmanship. We
-              use only high-quality materials and proven techniques to ensure
-              your new lawn, garden, or fence is not only beautiful but also
-              built to last.
+              Beyond fencing, we maintain the entire surroundings of your building or office. 
+              Our <strong>property care services</strong> include professional lawn mowing, 
+              trimming, and general gardening to keep your outdoor areas healthy and neat.
+              <br /><br />
+              We take the hassle out of property management by cutting down overgrown grass, 
+              cleaning outdoor areas, and handling <strong>general waste and bin pickup</strong>. 
+              Whether it’s a residential yard or commercial premises, we leave your space spotless.
             </p>
             <Link
               to="/about"
-              // The Link tag itself becomes the button container
               className="inline-block relative overflow-hidden group font-bold py-3 px-8 rounded-none border-2 border-primary text-primary transition-all duration-300 transform hover:scale-105"
             >
-              {/* The animated GREEN fill effect */}
               <span className="absolute top-0 left-0 w-0 h-full bg-[#6FAF4B] transition-all duration-300 ease-in-out group-hover:w-full z-0"></span>
-
-              {/* The text on top */}
               <span className="relative z-10 group-hover:text-white transition-colors duration-300">
-                Learn More About Us
+                About us
               </span>
             </Link>
           </div>

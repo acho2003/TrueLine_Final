@@ -1,10 +1,7 @@
-// src/pages/admin/BlogManager.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { getBlogPosts, createBlogPost, deleteBlogPost, BlogPost } from '../../services/api';
 import Spinner from '../../components/Spinner';
-import { PlusCircle, Trash2, X, Image as ImageIcon } from 'lucide-react';
-
-const API_BASE_URL = 'https://trueline.onrender.com/api';;
+import { PlusCircle, Trash2, X } from 'lucide-react';
 
 const BlogManager: React.FC = () => {
     const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -55,7 +52,7 @@ const BlogManager: React.FC = () => {
         const formData = new FormData();
         formData.append('title', title);
         formData.append('content', content);
-        formData.append('image', imageFile); // 'image' must match the backend upload field name
+        formData.append('image', imageFile); 
 
         try {
             await createBlogPost(formData);
@@ -116,7 +113,8 @@ const BlogManager: React.FC = () => {
                 <div className="space-y-4">
                     {posts.map(post => (
                         <div key={post._id} className="bg-white rounded-lg shadow-md flex items-center p-4">
-                            <img  src={`https://trueline.onrender.com/${post.imageUrl.replace(/\\/g, "/")}`} alt={post.title} className="w-32 h-20 object-cover rounded-md mr-4" />
+                            {/* UPDATED: Use imageUrl directly */}
+                            <img src={post.imageUrl} alt={post.title} className="w-32 h-20 object-cover rounded-md mr-4" />
                             <div className="flex-1">
                                 <h3 className="text-xl font-bold text-gray-800">{post.title}</h3>
                                 <p className="text-sm text-gray-500">Published on: {new Date(post.createdAt).toLocaleDateString()}</p>

@@ -6,7 +6,7 @@ import { getBlogPosts, BlogPost } from '../services/api';
 import Spinner from '../components/Spinner';
 import { FaFacebookF, FaTwitter, FaLinkedinIn } from 'react-icons/fa';
 
-const API_BASE_URL = "https://trueline.onrender.com";
+const API_BASE_URL = "http://localhost:5000";
 
 const BlogDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -47,10 +47,8 @@ const BlogDetailPage: React.FC = () => {
 
   if (!post) return null;
 
-  const normalizedPath = post.imageUrl
-    .replace(/^backend[\\/]+/, '')
-    .replace(/\\/g, '/');
-  const imageUrl = `${API_BASE_URL}/${normalizedPath}`;
+  const normalizedPath = post.imageUrl.replace(/\\/g, '/');
+  const imageUrl = `${normalizedPath}`;
 
   const postUrl = window.location.href;
   const shareText = `Check out this article from TrueLine: ${post.title}`;
@@ -90,9 +88,7 @@ const BlogDetailPage: React.FC = () => {
               src={imageUrl}
               alt={post.title}
               className="w-full h-auto object-cover shadow-lg mb-8"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = '/placeholder-image.jpg';
-              }}
+             
             />
 
             <div

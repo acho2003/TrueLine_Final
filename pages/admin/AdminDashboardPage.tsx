@@ -5,10 +5,11 @@ import BookingManager from './BookingManager';
 import ServiceManager from './ServiceManager';
 import GalleryManager from './GalleryManager';
 import BlogManager from './BlogManager'; // <-- 1. IMPORT the new BlogManager component
+import TestimonialManager from './TestimonialManager';
 
 // Define the type for our tabs to ensure type safety
 // V V V 2. ADD 'Blog' to the list of possible tab types V V V
-type AdminTab = 'Bookings' | 'Services' | 'Gallery' | 'Blog';
+type AdminTab = 'Bookings' | 'Services' | 'Gallery' | 'Blog' | 'Testimonials';
 
 const AdminDashboardPage: React.FC = () => {
     const { logout, user } = useAuth();
@@ -31,6 +32,8 @@ const AdminDashboardPage: React.FC = () => {
                 return <GalleryManager />;
             case 'Blog': // <-- 3. ADD a case for the 'Blog' tab
                 return <BlogManager />;
+            case 'Testimonials':
+                return <TestimonialManager />;
             default:
                 return <div>Select a tab to get started.</div>;
         }
@@ -56,7 +59,7 @@ const AdminDashboardPage: React.FC = () => {
                 <div className="mb-8 border-b border-gray-200">
                     <nav className="-mb-px flex space-x-8" aria-label="Tabs">
                         {/* V V V 4. ADD 'Blog' to the array of tabs to be rendered V V V */}
-                        {(['Bookings', 'Services', 'Gallery', 'Blog'] as AdminTab[]).map(tab => (
+                        {(['Bookings', 'Services', 'Gallery', 'Blog','Testimonials'] as AdminTab[]).map(tab => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}

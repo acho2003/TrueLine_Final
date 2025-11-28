@@ -7,8 +7,6 @@ import { Service } from "../types";
 import Spinner from "../components/Spinner";
 import { HiArrowLongRight } from "react-icons/hi2";
 
-
-
 // --------------------------------------
 // ServiceRow Component
 // --------------------------------------
@@ -17,14 +15,18 @@ const ServiceRow: React.FC<{
   index: number;
   imagePosition: "left" | "right";
 }> = ({ service, index, imagePosition }) => {
-  const imageSrc = `https://trueline.onrender.com/${service.imageUrl}`;
+  const imageSrc = `${service.imageUrl}`;
 
   const imageBlock = (
-    <div className="relative w-full h-full flex items-center justify-center order-1 md:order-none">
+    <div className="relative w-full order-1 md:order-none">
       {/* Large Faint Background Number */}
       <div
         className={`hidden md:flex absolute text-[120px] lg:text-[150px] font-extrabold text-gray-200/40 font-montserrat pointer-events-none select-none
-        ${imagePosition === "left" ? "left-1/2 -translate-x-1/2" : "left-1/2 -translate-x-1/2"}`}
+        ${
+          imagePosition === "left"
+            ? "left-1/2 -translate-x-1/2"
+            : "left-1/2 -translate-x-1/2"
+        }`}
         style={{
           top: "50%",
           transform: "translate(-50%, -50%)",
@@ -34,20 +36,26 @@ const ServiceRow: React.FC<{
         {String(index + 1).padStart(2, "0")}
       </div>
 
-      {/* Image */}
-      <img
-        src={imageSrc}
-        alt={service.name}
-        className="w-full h-full object-cover min-h-[350px] rounded-lg shadow-md relative z-10"
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = imageSrc;
+      {/* 
+         ✅ MODIFIED: PARALLAX IMAGE 
+         1. We use a div instead of <img />.
+         2. h-[400px] md:h-[500px]: Gives the box height since there is no physical image tag.
+         3. bg-fixed: Keeps image static relative to viewport (The "Fixed" effect).
+         4. bg-scroll on mobile: Fixed backgrounds often glitch on mobile, so we turn it off for small screens.
+      */}
+      <div
+        className="w-full h-[350px] md:h-[500px] rounded-lg shadow-md relative z-10 bg-cover bg-center bg-no-repeat bg-scroll md:bg-fixed"
+        style={{
+          backgroundImage: `url(${imageSrc})`,
         }}
+        role="img"
+        aria-label={service.name}
       />
     </div>
   );
 
   const textBlock = (
-    <div className="relative mt-5 md:mt-0 h-full flex flex-col justify-center z-20 order-2 md:order-none">
+    <div className="relative mt-5 md:mt-0 h-full flex flex-col justify-center z-20 order-2 md:order-none py-4">
       <h4 className="text-base font-semibold text-secondary uppercase font-montserrat tracking-wider">
         OUTDOOR SERVICE
       </h4>
@@ -63,7 +71,7 @@ const ServiceRow: React.FC<{
         {service.description.slice(0, 150)}...
       </p>
 
-      {/* ✅ Learn More Link + Arrow */}
+      {/* Learn More Link + Arrow */}
       <Link
         to={`/services/${service._id}`}
         aria-label={`Read more about ${service.name}`}
@@ -80,8 +88,8 @@ const ServiceRow: React.FC<{
 
   return (
     <div
-      className={`grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-start`}
-      data-aos="zoom-in-up"
+      className={`grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center`}
+      data-aos="fade-up" // Changed to fade-up for smoother parallax entrance
       data-aos-duration="1000"
     >
       {/* On desktop, alternate image/text position */}
@@ -150,7 +158,7 @@ const ServicesPage: React.FC = () => {
         ) : error ? (
           <div className="text-center text-red-500">{error}</div>
         ) : (
-          <div className="space-y-16">
+          <div className="space-y-16 lg:space-y-24">
             {servicesToShow.map((service, index) => (
               <ServiceRow
                 key={service._id}

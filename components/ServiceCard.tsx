@@ -13,7 +13,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
     >
       {/* Background image (taller height) */}
       <img
-        src={`https://trueline.onrender.com/${service.imageUrl.replace(/\\/g, '/')}`}
+        src={`${service.imageUrl.replace(/\\/g, '/')}`}
         alt={service.name}
         className="w-full h-80 object-cover" // increased height from h-64 → h-80
       />

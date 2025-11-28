@@ -1,13 +1,11 @@
 // src/services/api.ts
 
-// --- FIX: IMPORT the types from your central types file ---
 import { Booking, BookingStatus, Service, User } from '../types';
 
 // --- Configuration ---
-
 const API_URL = "https://trueline.onrender.com/api";
 
-// --- Helper function for API requests (remains the same) ---
+// --- Helper function for API requests ---
 async function request<T>(
   endpoint: string,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
@@ -20,9 +18,10 @@ async function request<T>(
     const requestOptions: RequestInit = {
         method,
         headers: {
-        ...(token && { Authorization: `Bearer ${token}` }),
-        ...(!hasFile && { 'Content-Type': 'application/json' }),
-        ...headers,
+            ...(token && { Authorization: `Bearer ${token}` }),
+            // If sending a file (FormData), do NOT set Content-Type manually; browser does it.
+            ...(!hasFile && { 'Content-Type': 'application/json' }),
+            ...headers,
         },
         ...(body && !hasFile && { body: JSON.stringify(body) }),
         ...(body && hasFile && { body: body }),
@@ -35,6 +34,7 @@ async function request<T>(
         throw new Error(errorData.msg || `HTTP error! status: ${response.status}`);
     }
 
+    // Handle 204 No Content (common for deletes)
     if (response.status === 204) {
         return {} as T;
     }
@@ -42,22 +42,39 @@ async function request<T>(
     return response.json();
 }
 
+// ==========================================
+// AUTHENTICATION
+// ==========================================
 
-// --- Gallery API Call ---
-// Defines the structure of the data we expect for the gallery
-interface GalleryWork {
-  _id: string;
-  serviceType: string;
-  beforePhotos: string[];
-  afterPhotos: string[];
-}
-
-export const getGalleryWorks = async (): Promise<GalleryWork[]> => {
-  return request<GalleryWork[]>('gallery');
+export const loginUser = async (email: string, password: string): Promise<User> => {
+  return request<User>('users/login', 'POST', { email, password });
 };
 
+// ==========================================
+// SERVICES
+// ==========================================
 
-// --- Booking API Calls (remain the same) ---
+export const getServices = async (): Promise<Service[]> => {
+  return request<Service[]>('services');
+};
+
+export const createService = async (serviceData: FormData): Promise<Service> => {
+  return request<Service>('services', 'POST', serviceData, true);
+};
+
+export const updateService = async (id: string, serviceData: FormData): Promise<Service> => {
+  return request<Service>(`services/${id}`, 'PUT', serviceData, true);
+};
+
+export const deleteService = async (id: string): Promise<{ success: boolean }> => {
+  await request(`services/${id}`, 'DELETE');
+  return { success: true };
+};
+
+// ==========================================
+// BOOKINGS
+// ==========================================
+
 export const getBookings = async (): Promise<Booking[]> => {
   return request<Booking[]>('bookings');
 };
@@ -84,37 +101,10 @@ export const deleteBooking = async (id: string): Promise<{ success: boolean }> =
   return { success: true };
 };
 
+// ==========================================
+// GALLERY
+// ==========================================
 
-// --- Authentication API Calls (remain the same) ---
-export const loginUser = async (email: string, password: string): Promise<User> => {
-  return request<User>('users/login', 'POST', { email, password });
-};
-
-
-// --- Service API Calls (remain the same)---
-export const getServices = async (): Promise<Service[]> => {
-  return request<Service[]>('services');
-};
-
-export const createService = async (serviceData: FormData): Promise<Service> => {
-  return request<Service>('services', 'POST', serviceData, true);
-};
-
-export const updateService = async (id: string, serviceData: FormData): Promise<Service> => {
-  return request<Service>(`services/${id}`, 'PUT', serviceData, true);
-};
-
-export const deleteService = async (id: string): Promise<{ success: boolean }> => {
-  await request(`services/${id}`, 'DELETE');
-  return { success: true };
-};
-
-// src/services/api.ts
-// ... (keep all existing imports and functions)
-
-// --- Gallery API Calls ---
-
-// This interface is for the new, managed gallery items
 export interface GalleryItem {
   _id: string;
   serviceType: string;
@@ -124,23 +114,31 @@ export interface GalleryItem {
   createdAt: string;
 }
 
-// Get all items for the admin management page
+// Used by Public Gallery (Alias for convenience)
+export type GalleryWork = GalleryItem;
+
+// Fetch all items (Public & Admin use the same endpoint in your setup)
+export const getGalleryWorks = async (): Promise<GalleryWork[]> => {
+  // Pointing to 'manage' because that is where the GET route is defined in backend
+  return request<GalleryWork[]>('gallery/manage');
+};
+
 export const getManagedGalleryItems = async (): Promise<GalleryItem[]> => {
   return request<GalleryItem[]>('gallery/manage');
 };
 
-// Create a new gallery item using FormData for file uploads
 export const createGalleryItem = async (formData: FormData): Promise<GalleryItem> => {
   return request<GalleryItem>('gallery/manage', 'POST', formData, true);
 };
 
-// Delete a gallery item by its ID
 export const deleteGalleryItem = async (id: string): Promise<{ success: boolean }> => {
   await request(`gallery/manage/${id}`, 'DELETE');
   return { success: true };
 };
-// src/services/api.ts
-// ... (add this with your other interfaces and functions)
+
+// ==========================================
+// BLOG
+// ==========================================
 
 export interface BlogPost {
   _id: string;
@@ -160,5 +158,33 @@ export const createBlogPost = async (formData: FormData): Promise<BlogPost> => {
 
 export const deleteBlogPost = async (id: string): Promise<{ success: boolean }> => {
   await request(`blog/${id}`, 'DELETE');
+  return { success: true };
+};
+
+// ==========================================
+// TESTIMONIALS
+// ==========================================
+
+export interface Testimonial {
+  _id: string;
+  name: string;
+  location: string;
+  rating: number;
+  reviewText: string;
+  createdAt: string;
+}
+
+export const getTestimonials = async (): Promise<Testimonial[]> => {
+  return request<Testimonial[]>('testimonials');
+};
+
+// Note: Testimonials usually don't need FormData unless you add avatar images later.
+// We use Omit to exclude auto-generated fields.
+export const createTestimonial = async (data: Omit<Testimonial, '_id' | 'createdAt'>): Promise<Testimonial> => {
+  return request<Testimonial>('testimonials', 'POST', data);
+};
+
+export const deleteTestimonial = async (id: string): Promise<{ success: boolean }> => {
+  await request(`testimonials/${id}`, 'DELETE');
   return { success: true };
 };

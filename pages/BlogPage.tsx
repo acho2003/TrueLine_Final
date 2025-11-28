@@ -5,7 +5,7 @@ import Spinner from "../components/Spinner";
 import { Link } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs"; // A nice arrow for the button
 
-const API_BASE_URL = "https://trueline.onrender.com";
+const API_BASE_URL = "http://localhost:5000";
 
 const BlogPage: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -49,7 +49,7 @@ const BlogPage: React.FC = () => {
             Our Blog
           </h1>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore stories, insights, and tips from our team — crafted to
+            Explore stories, insights, and tips from our team, crafted to
             inspire and inform your outdoor projects.
           </p>
         </div>
@@ -76,7 +76,7 @@ const BlogPage: React.FC = () => {
                     <Link to={`/blog/${post._id}`}>
                       <img
                         // ✅ FIX: fetch image from backend correctly
-                        src={`https://trueline.onrender.com/${post.imageUrl.replace(/\\/g, "/")}`}
+                        src={`${post.imageUrl.replace(/\\/g, "/")}`}
                         alt={post.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />

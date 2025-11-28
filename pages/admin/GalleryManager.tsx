@@ -1,11 +1,7 @@
-// src/pages/admin/GalleryManager.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { getManagedGalleryItems, createGalleryItem, deleteGalleryItem, GalleryItem } from '../../services/api';
 import Spinner from '../../components/Spinner';
-import { PlusCircle, Trash2, UploadCloud, X } from 'lucide-react';
-
-
-const API_BASE_URL = 'https://trueline.onrender.com/api';
+import { PlusCircle, Trash2, UploadCloud, X, PlayCircle } from 'lucide-react';
 
 const GalleryManager: React.FC = () => {
     const [items, setItems] = useState<GalleryItem[]>([]);
@@ -48,8 +44,8 @@ const GalleryManager: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!serviceType || !description || beforeFiles.length === 0 || afterFiles.length === 0) {
-            setError('Please fill all fields and select both before and after photos.');
+        if (!serviceType || !description || beforeFiles.length === 0) {
+            setError('Please fill all fields and select both before and after media.');
             return;
         }
         setIsSubmitting(true);
@@ -64,7 +60,7 @@ const GalleryManager: React.FC = () => {
         try {
             await createGalleryItem(formData);
             resetForm();
-            fetchItems(); // Refresh the list
+            fetchItems();
         } catch (err: any) {
             setError(err.message || 'Failed to create gallery item.');
         } finally {
@@ -77,11 +73,38 @@ const GalleryManager: React.FC = () => {
             try {
                 setError('');
                 await deleteGalleryItem(id);
-                fetchItems(); // Refresh the list
+                fetchItems();
             } catch (err: any) {
                 setError(err.message || 'Failed to delete item.');
             }
         }
+    };
+
+    // Helper to determine if a URL is a video based on extension
+    const isVideo = (url: string) => {
+        return /\.(mp4|webm|ogg|mov|avi|mkv)$/i.test(url);
+    };
+
+    // Helper component to render media (Image or Video)
+    const MediaItem = ({ url, alt }: { url: string; alt: string }) => {
+        if (isVideo(url)) {
+            return (
+                <div className="relative w-full h-32 bg-black">
+                    <video 
+                        src={url} 
+                        controls 
+                        className="w-full h-full object-cover" 
+                        preload="metadata"
+                    />
+                    {/* Optional: Overlay icon if you want to indicate it's a video before playing
+                        (Note: native controls usually handle this, but for object-cover styling): */}
+                    <div className="absolute top-2 right-2 pointer-events-none">
+                        <PlayCircle size={16} className="text-white opacity-70" />
+                    </div>
+                </div>
+            );
+        }
+        return <img src={url} alt={alt} className="w-full h-32 object-cover" />;
     };
 
     return (
@@ -99,7 +122,6 @@ const GalleryManager: React.FC = () => {
 
             {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert"><p>{error}</p></div>}
             
-            {/* --- Add/Edit Form --- */}
             {isFormVisible && (
                 <div className="bg-white p-6 mb-8 border border-gray-200 rounded-lg shadow-sm animate-fadeInUp">
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -113,12 +135,24 @@ const GalleryManager: React.FC = () => {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Before Photos</label>
-                                <input type="file" multiple accept="image/*" onChange={e => setBeforeFiles(Array.from(e.target.files || []))} className="mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                                <label className="block text-sm font-medium text-gray-700">Before Media (Images/Video)</label>
+                                <input 
+                                    type="file" 
+                                    multiple 
+                                    accept="image/*,video/*" // CHANGED: Allows both types
+                                    onChange={e => setBeforeFiles(Array.from(e.target.files || []))} 
+                                    className="mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" 
+                                />
                             </div>
                              <div>
-                                <label className="block text-sm font-medium text-gray-700">After Photos</label>
-                                <input type="file" multiple accept="image/*" onChange={e => setAfterFiles(Array.from(e.target.files || []))} className="mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"/>
+                                <label className="block text-sm font-medium text-gray-700">After Media (Images/Video)</label>
+                                <input 
+                                    type="file" 
+                                    multiple 
+                                    accept="image/*,video/*" // CHANGED: Allows both types
+                                    onChange={e => setAfterFiles(Array.from(e.target.files || []))} 
+                                    className="mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                                />
                             </div>
                         </div>
                         <div className="flex justify-end pt-2">
@@ -130,7 +164,6 @@ const GalleryManager: React.FC = () => {
                 </div>
             )}
 
-            {/* --- Gallery Items List --- */}
             {isLoading ? <div className="flex justify-center p-8"><Spinner /></div> : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
                     {items.map(item => (
@@ -140,8 +173,13 @@ const GalleryManager: React.FC = () => {
                                 <p className="text-sm text-gray-600 mt-1">{item.description}</p> 
                             </div>
                             <div className="grid grid-cols-2 gap-px bg-gray-200">
-                                {item.beforePhotos.map((url, i) => <img key={i} src={`https://trueline.onrender.com/${url}`} alt="Before" className="w-full h-32 object-cover" />)}
-                                {item.afterPhotos.map((url, i) => <img key={i} src={`https://trueline.onrender.com/${url}`} alt="After" className="w-full h-32 object-cover" />)}
+                                {/* CHANGED: Uses MediaItem helper to render video or image */}
+                                {item.beforePhotos.map((url, i) => (
+                                    <MediaItem key={`before-${i}`} url={url} alt="Before" />
+                                ))}
+                                {item.afterPhotos.map((url, i) => (
+                                    <MediaItem key={`after-${i}`} url={url} alt="After" />
+                                ))}
                             </div>
                             <div className="p-2 bg-gray-50 flex justify-end">
                                 <button onClick={() => handleDelete(item._id)} className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100 transition-colors">

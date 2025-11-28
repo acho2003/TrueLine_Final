@@ -1,5 +1,3 @@
-
-
 // src/pages/ContactPage.tsx
 
 import React, { useState } from "react";
@@ -7,7 +5,11 @@ import { IoIosCall } from "react-icons/io";
 import { MdEmail, MdOutlineShareLocation } from "react-icons/md";
 import emailjs from "emailjs-com";
 
-const ContactInfoItem: React.FC<{ icon: React.ReactNode; title: string; children: React.ReactNode }> = ({ icon, title, children }) => (
+const ContactInfoItem: React.FC<{
+  icon: React.ReactNode;
+  title: string;
+  children: React.ReactNode;
+}> = ({ icon, title, children }) => (
   <div className="flex items-center my-6 group">
     <div className="w-16 h-16 bg-gray-100 group-hover:bg-secondary flex items-center justify-center transition-all">
       {React.cloneElement(icon as React.ReactElement, {
@@ -56,71 +58,134 @@ const ContactPage: React.FC = () => {
       {/* Contact Section */}
       <section className="py-20 lg:py-28 bg-white">
         <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* LEFT SIDE */}
+          {/* LEFT SIDE - CONTACT INFO */}
           <div data-aos="fade-right">
-            <h2 className="text-3xl font-bold text-primary mb-4">Contact Information</h2>
+            <h2 className="text-3xl font-bold text-primary mb-4">
+              Contact Information
+            </h2>
             <p className="text-gray-600 mb-6">
-              You can call, email, or message us anytime. We’ll get back to you as soon as possible.
+              Have questions? You can call or email us directly. Or, if we've worked together, please use the form on the right to leave us a review!
             </p>
 
             <ContactInfoItem icon={<IoIosCall />} title="Call Us Now">
-              <a href="tel:+61415331913" className="hover:text-secondary">(+61) 415 331 913</a>
+              <a href="tel:+61415331913" className="hover:text-secondary">
+                (+61) 415 331 913
+              </a>
             </ContactInfoItem>
 
             <ContactInfoItem icon={<MdEmail />} title="Send An Email">
-              <a href="mailto:wangchukmax@gmail.com" className="hover:text-secondary">wangchukmax@gmail.com</a>
+              <a
+                href="mailto:wangchukmax@gmail.com"
+                className="hover:text-secondary"
+              >
+                wangchukmax@gmail.com
+              </a>
             </ContactInfoItem>
 
-            <ContactInfoItem icon={<MdOutlineShareLocation />} title="Our Location">
+            <ContactInfoItem
+              icon={<MdOutlineShareLocation />}
+              title="Our Location"
+            >
               <p>50 Francisco Street, Rivervale WA 6103</p>
             </ContactInfoItem>
           </div>
 
-          {/* RIGHT SIDE: FORM */}
+          {/* RIGHT SIDE: TESTIMONIAL FORM */}
           <div className="bg-primary p-8 md:p-12" data-aos="fade-left">
-            <h2 className="text-3xl font-bold text-white text-center mb-8">Send Us A Message</h2>
+            <h2 className="text-3xl font-bold text-white text-center mb-2">
+              Share Your Experience
+            </h2>
+            <p className="text-gray-400 text-center mb-8 text-sm">
+              We value your feedback. Let us know how we did!
+            </p>
 
             <form className="space-y-6" onSubmit={sendEmail}>
+              {/* Name Field */}
               <input
                 type="text"
                 name="name"
                 placeholder="Your Name"
-                className="w-full h-14 px-4 bg-transparent border border-gray-600 text-white placeholder-gray-400"
+                className="w-full h-14 px-4 bg-transparent border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors"
                 required
               />
 
+              {/* Location Field (Replaced Email) */}
               <input
-                type="email"
-                name="email"
-                placeholder="Your Email"
-                className="w-full h-14 px-4 bg-transparent border border-gray-600 text-white placeholder-gray-400"
+                type="text"
+                name="location"
+                placeholder="Your Location (e.g. Rivervale, Perth)"
+                className="w-full h-14 px-4 bg-transparent border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors"
                 required
               />
 
+              {/* Star Rating Dropdown */}
+              <div className="relative">
+                <select
+                  name="rating"
+                  className="w-full h-14 px-4 bg-transparent border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors appearance-none cursor-pointer"
+                  required
+                  defaultValue=""
+                >
+                  <option value="" disabled className="text-gray-500 bg-primary">
+                    Select a Star Rating
+                  </option>
+                  <option value="5 Stars" className="text-black">
+                    ⭐⭐⭐⭐⭐ (5 Stars) - Excellent
+                  </option>
+                  <option value="4 Stars" className="text-black">
+                    ⭐⭐⭐⭐ (4 Stars) - Very Good
+                  </option>
+                  <option value="3 Stars" className="text-black">
+                    ⭐⭐⭐ (3 Stars) - Good
+                  </option>
+                  <option value="2 Stars" className="text-black">
+                    ⭐⭐ (2 Stars) - Fair
+                  </option>
+                  <option value="1 Star" className="text-black">
+                    ⭐ (1 Star) - Poor
+                  </option>
+                </select>
+                {/* Custom arrow for dropdown */}
+                <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-400">
+                  <svg
+                    className="w-4 h-4 fill-current"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Message Field */}
               <textarea
                 name="message"
                 rows={5}
-                placeholder="Write your message"
-                className="w-full p-4 bg-transparent border border-gray-600 text-white placeholder-gray-400 resize-none"
+                placeholder="Write your testimonial here..."
+                className="w-full p-4 bg-transparent border border-gray-600 text-white placeholder-gray-400 resize-none focus:outline-none focus:border-secondary transition-colors"
                 required
               ></textarea>
 
-              {/* Hidden time field */}
-              <input type="hidden" name="time" value={new Date().toLocaleString()} />
-
+              {/* Submit Button */}
               <button
                 type="submit"
                 className="w-full font-bold py-4 px-8 border-2 border-secondary text-secondary hover:bg-secondary hover:text-white transition-all"
+                disabled={loading}
               >
-                {loading ? "Sending..." : "Send Message"}
+                {loading ? "Submitting..." : "Submit Testimonial"}
               </button>
 
+              {/* Status Messages */}
               {status === "success" && (
-                <p className="text-green-400 text-center mt-2">Message sent successfully! ✔</p>
+                <div className="text-center mt-4 p-3 bg-green-500/20 border border-green-500 rounded">
+                  <p className="text-green-400 font-bold">Thank you!</p>
+                  <p className="text-green-200 text-sm">Your feedback has been sent successfully.</p>
+                </div>
               )}
 
               {status === "error" && (
-                <p className="text-red-400 text-center mt-2">Failed to send message. Try again.</p>
+                <p className="text-red-400 text-center mt-2">
+                  Failed to send. Please try again later.
+                </p>
               )}
             </form>
           </div>

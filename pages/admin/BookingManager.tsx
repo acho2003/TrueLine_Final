@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
+// Removed unused chart imports for cleaner code
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Booking, BookingStatus } from '../../types';
-import { getBookings, updateBookingStatus, deleteBooking, uploadPhotos } from '../../services/api';
+import { getBookings, updateBookingStatus, deleteBooking } from '../../services/api';
 import Spinner from '../../components/Spinner';
-import BookingModal from '../../components/BookingModal'; // Make sure this path is correct
+import BookingModal from '../../components/BookingModal';
 
 const statusColors: { [key in BookingStatus]: string } = {
     [BookingStatus.Pending]: 'bg-yellow-100 text-yellow-800',
@@ -62,65 +62,14 @@ const BookingManager: React.FC = () => {
 
     const filteredBookings = useMemo(() => bookings.filter(b => b.status === activeTab), [bookings, activeTab]);
 
-    const analyticsData = useMemo(() => {
-        const serviceCounts = bookings.reduce((acc, booking) => {
-            acc[booking.serviceType] = (acc[booking.serviceType] || 0) + 1;
-            return acc;
-        }, {} as Record<string, number>);
-        return Object.entries(serviceCounts).map(([name, count]) => ({ name, count }));
-    }, [bookings]);
-
-    const monthlyTrends = useMemo(() => {
-        const trends: Record<string, number> = {};
-        bookings.forEach(booking => {
-            const month = new Date(booking.createdAt).toLocaleString('default', { month: 'short', year: 'numeric' });
-            trends[month] = (trends[month] || 0) + 1;
-        });
-        return Object.entries(trends).map(([name, count]) => ({ name, count })).reverse();
-    }, [bookings]);
-
     return (
         <>
             {error && <div className="text-red-500 bg-red-100 p-3 rounded mb-4">{error}</div>}
             
-            {/* <section className="mb-8 p-6 bg-gray-50 rounded-lg border">
-                <h2 className="text-xl font-bold mb-4">Analytics</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8" style={{ minHeight: '300px' }}>
-                    <div style={{ width: '100%', height: '300px' }}>
-                        <h3 className="text-lg font-semibold text-center mb-2">Popular Services</h3>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={analyticsData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
-                                <Bar dataKey="count" fill="#313647" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                    <div style={{ width: '100%', height: '300px' }}>
-                        <h3 className="text-lg font-semibold text-center mb-2">Monthly Bookings</h3>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={monthlyTrends}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
-                                <Line type="monotone" dataKey="count" stroke="#9EB78B" strokeWidth={2} />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-            </section> */}
-
             <h2 className="text-xl font-bold mb-4">Bookings Management</h2>
             <div className="border-b border-gray-200">
                 <nav className="-mb-px flex space-x-8" aria-label="Tabs">
                     {Object.values(BookingStatus).map(status => (
-                        // --- FIX #1: Add a unique 'key' to the status button ---
-                        // The 'status' string itself ('Pending', 'Approved', etc.) is unique here.
                         <button 
                             key={status} 
                             onClick={() => setActiveTab(status)}
@@ -146,8 +95,6 @@ const BookingManager: React.FC = () => {
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {filteredBookings.map(booking => (
-                                    // --- FIX #2: Add a unique 'key' to the table row ---
-                                    // The booking._id from MongoDB is the perfect unique key.
                                     <tr key={booking._id}>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">{booking.name}</div>

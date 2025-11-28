@@ -4,16 +4,20 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getServices, getManagedGalleryItems } from "../services/api";
 import { Service } from "../types";
-import ServiceCard from "../components/ServiceCard";
+// import ServiceCard from "../components/ServiceCard"; // Unused
 import Spinner from "../components/Spinner";
 import AboutSection from "../components/AboutSection";
 import FeaturedServicesSection from "../components/FeaturedServicesSection";
 import TestimonialsSection from "../components/TestimonialsSection";
-// import GallerySliderSection from "../components/GallerySliderSection";
-import banner1 from "../assets/banners.jpg";
 import { Phone, Mail } from "lucide-react";
 import "aos/dist/aos.css";
 import AOS from "aos";
+
+// --- 1. IMPORT YOUR 3 IMAGES HERE ---
+import banner1 from "../assets/banner2.jpeg"; 
+// Make sure these files exist in your assets folder
+
+import banner3 from "../assets/oo.jpg"; 
 
 interface GalleryWork {
   _id: string;
@@ -21,23 +25,28 @@ interface GalleryWork {
   afterPhotos: string[];
 }
 
-const API_BASE_URL = "https://trueline.onrender.com";
-
 const HomePage: React.FC = () => {
   const [services, setServices] = useState<Service[]>([]);
-  const [works, setWorks] = useState<GalleryWork[]>([]);
+  // const [works, setWorks] = useState<GalleryWork[]>([]); // Unused in this snippet
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // --- 2. SLIDER STATE ---
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Create an array of your imported images
+  const bannerImages = [banner1, banner3];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Using Promise.allSettled or just catching generally
         const [servicesData, galleryData] = await Promise.all([
           getServices(),
           getManagedGalleryItems(),
         ]);
         setServices(servicesData);
-        setWorks(galleryData);
+        // setWorks(galleryData);
       } catch (err: any) {
         setError("Failed to load page content. Please try again later.");
       } finally {
@@ -48,7 +57,6 @@ const HomePage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // ✅ Initialize AOS
     AOS.init({
       duration: 1000,
       once: true,
@@ -56,25 +64,45 @@ const HomePage: React.FC = () => {
       easing: "ease-in-out",
     });
   }, []);
+
+  // --- 3. AUTOMATIC IMAGE CYCLING LOGIC ---
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === bannerImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 6000); // Change image every 6 seconds
+
+    return () => clearInterval(interval);
+  }, [bannerImages.length]);
+
   const heroHeading = "WA’s Trusted Name in Outdoor Services".split(" ");
 
   return (
     <div className="font-open-sans">
       <section className="relative h-screen bg-black overflow-hidden">
-        {/* --- MODIFIED: Added responsive background position classes --- */}
-        <div
-          // bg-center is the default for mobile. On medium screens and up, it will also be centered.
-          // You can change this, e.g., 'bg-top md:bg-center' to focus on the top for mobile.
-          className="absolute inset-0 w-full h-full bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${banner1})`,
-            animation: "zoomIn 8s ease-in-out forwards",
-          }}
-        />
+        
+        {/* --- 4. MODIFIED BACKGROUND SECTION --- */}
+        {/* We render ALL images, but only show the 'current' one using opacity */}
+        {bannerImages.map((image, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-1000 ease-in-out ${
+              index === currentImageIndex ? "opacity-100" : "opacity-0"
+            }`}
+            style={{
+              backgroundImage: `url(${image})`,
+              // Reset animation when image becomes active so it zooms in again
+              animation: index === currentImageIndex ? "zoomIn 8s ease-in-out forwards" : "none",
+            }}
+          />
+        ))}
 
-        <div className="absolute inset-0 bg-black/60" />
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/60 z-10" />
 
-        <div className="relative h-full flex flex-col justify-center container mx-auto px-4 text-left text-white z-10">
+        {/* Content */}
+        <div className="relative h-full flex flex-col justify-center container mx-auto px-4 text-left text-white z-20">
           <div className="max-w-2xl">
             <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight font-montserrat">
               {heroHeading.map((word, index) => (
@@ -113,7 +141,6 @@ const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* --- EXISTING BUTTON --- */}
             <Link
               to="/booking"
               className="inline-block relative overflow-hidden group font-bold py-4 px-10 rounded-none border-2 border-white transition-all duration-300 ease-in-out animate-fadeInUp"
@@ -140,16 +167,12 @@ const HomePage: React.FC = () => {
           <FeaturedServicesSection services={services} />
         )}
       </div>
-      <div data-aos="fade-up" data-aos-offset="150">
+      <div data-aos="fade-up " data-aos-offset="150">
         <AboutSection />
       </div>
       <div data-aos="fade-up" data-aos-offset="150">
         <TestimonialsSection />
       </div>
-      {/* Recent Work Section */}
-      {/* <div data-aos="fade-up" data-aos-offset="150">
-        <GallerySliderSection works={works} />
-      </div> */}
     </div>
   );
 };
